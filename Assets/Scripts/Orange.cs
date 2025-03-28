@@ -6,9 +6,9 @@ public class Orange : MonoBehaviour
 {
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.TryGetComponent(out Player player))
+        if(collision.TryGetComponent(out OrangePicker picker))
         {
-            player.PickupOrange();
+            picker.PickupOrange();
             Destroy(gameObject);
         }
     }
