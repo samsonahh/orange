@@ -2,6 +2,7 @@ using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Orange : MonoBehaviour
 {
@@ -14,6 +15,8 @@ public class Orange : MonoBehaviour
     public Vector2 rotationSpeedRange = new Vector2(20f, 50f);
     float currentRotationSpeed;
     int rotationDirection;
+
+    public static System.Action OnGroundTouched;
 
     private void Awake()
     {
@@ -36,16 +39,23 @@ public class Orange : MonoBehaviour
         if(collision.TryGetComponent(out OrangePicker picker))
         {
             picker.PickupOrange();
-            GetPickedUp();
+            GetPickedUp(0.3f);
+            return;
+        }
+
+        if(collision.CompareTag("Ground"))
+        {
+            OnGroundTouched.Invoke();
+            GetPickedUp(0.1f);
         }
     }
 
-    void GetPickedUp()
+    void GetPickedUp(float duration)
     {
         circleCollider.enabled = false;
         rigidBody.simulated = false;
 
-        transform.DOScale(Vector3.zero, 0.3f).SetEase(Ease.InBack).OnComplete(() =>
+        transform.DOScale(Vector3.zero, duration).SetEase(Ease.InBack).OnComplete(() =>
         {
             Destroy(gameObject);
         });
