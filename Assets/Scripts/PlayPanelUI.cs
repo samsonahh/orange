@@ -1,3 +1,5 @@
+using DG.Tweening;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -9,10 +11,32 @@ public class PlayPanelUI : MonoBehaviour
     public OrangePicker orangePicker;
 
     [Header("References")]
+    public GameObject orangeCounterObject;
     public TMP_Text orangeCountText;
 
-    private void Update()
+    Vector3 originalOrangeCounterPosition;
+
+    private void Awake()
     {
-        orangeCountText.text = $"{orangePicker.orangeCount}";
+        originalOrangeCounterPosition = orangeCounterObject.transform.localPosition;
+    }
+
+    private void Start()
+    {
+        orangePicker.OnCountIncreased += OrangePicker_OnCountIncreased;
+    }
+
+    private void OnDestroy()
+    {
+        orangePicker.OnCountIncreased -= OrangePicker_OnCountIncreased;
+    }
+
+    private void OrangePicker_OnCountIncreased(int count)
+    {
+        orangeCountText.text = $"{count}";
+
+        DOTween.Kill(orangeCounterObject);
+        orangeCounterObject.transform.localPosition = originalOrangeCounterPosition;
+        orangeCounterObject.transform.DOShakePosition(0.5f, 10f);
     }
 }
